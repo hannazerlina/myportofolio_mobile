@@ -1,30 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/menu.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('menampilkan profil dan tiga menu dengan warna berbeda', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
+    expect(find.text('Hanna Zerlina Razaq Putri Wicaksono'), findsOneWidget);
+    expect(find.text('2506594692'), findsOneWidget);
+    expect(find.text('PBP E'), findsOneWidget);
+    expect(find.byType(ItemCard), findsNWidgets(3));
+    final cards = tester.widgetList<ItemCard>(find.byType(ItemCard)).toList();
+    expect(cards.map((card) => card.item.color).toSet().length, 3);
+    for (final item in MyHomePage.items) {
+      expect(find.text(item.name), findsOneWidget);
+      expect(find.byIcon(item.icon), findsOneWidget);
+      await tester.tap(find.text(item.name));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Kamu telah menekan tombol ${item.name}!'),
+        findsOneWidget,
+      );
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+    }
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('halaman dapat discroll pada layar kecil', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 480));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const MyApp());
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(
+      find.text('Logout'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Logout'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
