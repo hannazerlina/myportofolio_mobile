@@ -1,85 +1,135 @@
 import 'package:flutter/material.dart';
 
+/// One action shown on the portfolio home page.
+class ItemHomepage {
+  const ItemHomepage(this.name, this.icon, this.color);
+
+  final String name;
+  final IconData icon;
+  final Color color;
+}
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+  static const items = [
+    ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF234E99)),
+    ItemHomepage('Tambah Proyek', Icons.add_circle_outline, Color(0xFF26775E)),
+    ItemHomepage('Logout', Icons.logout, Color(0xFF9B4A3D)),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final items = [
-        ItemHomepage('Lihat Proyek', Icons.folder),
-        ItemHomepage('Tambah Proyek', Icons.add_circle),
-        ItemHomepage('Logout', Icons.logout),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('MyPortfolio'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
-     body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-            children: [
-                const Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        Expanded(
-                            child: InfoCard(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Wrap keeps identity and action cards readable on narrower screens.
+          final width = constraints.maxWidth;
+          final columns = width < 440 ? 1 : (width < 720 ? 2 : 3);
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 960),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Hi, I’m Hanna!',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text('Information Systems · Universitas Indonesia'),
+                    const SizedBox(height: 20),
+                    LayoutBuilder(
+                      builder: (context, box) {
+                        final cardWidth = box.maxWidth < 500
+                            ? box.maxWidth
+                            : (box.maxWidth - 24) / 3;
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: const InfoCard(
                                 title: 'NPM',
                                 content: '2506594692',
+                              ),
                             ),
-                        ),
-                        Expanded(
-                            child: InfoCard(
-                                title: 'Nama',
-                                content: 'Hanna Zerlina',
-                                ),
-                        ),
-                        Expanded(
-                            child: InfoCard(
-                                title: 'Kelas',
+                            SizedBox(
+                              width: cardWidth,
+                              child: const InfoCard(
+                                title: 'Name',
+                                content: 'Hanna Zerlina Razaq Putri Wicaksono',
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: const InfoCard(
+                                title: 'Class',
                                 content: 'PBP E',
-                                ),
-                        ),
-                    ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 28),
+                    const Text(
+                      'Menu portofolio',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text('Pilih menu untuk mencoba aksinya.'),
+                    const SizedBox(height: 16),
+                    GridView.count(
+                      crossAxisCount: columns,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: columns == 1 ? 3 : 1.5,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: items.map((item) => ItemCard(item)).toList(),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                const Text('Selamat datang di MyPortfolio Mobile!'),
-                GridView.count(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    shrinkWrap: true,
-                    children: items.map((item) => ItemCard(item)).toList(),
-                ),
-            ],
-        ),
-        ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
 class InfoCard extends StatelessWidget {
-    final String title;
-    final String content;
+  const InfoCard({super.key, required this.title, required this.content});
 
-    const InfoCard({
-        super.key,
-        required this.title,
-        required this.content,
-    });
+  final String title;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
-      child: Container(
+      elevation: 1,
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(content),
           ],
@@ -89,22 +139,15 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-class ItemHomepage {
-  final String name;
-  final IconData icon;
-
-  ItemHomepage(this.name, this.icon);
-}
-
 class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
-
   const ItemCard(this.item, {super.key});
+
+  final ItemHomepage item;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.secondary,
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -113,22 +156,28 @@ class ItemCard extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text('Kamu menekan tombol ${item.name}!'),
+                content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
         },
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(item.icon, color: Colors.white, size: 30),
-              const SizedBox(height: 8),
-              Text(
-                item.name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(item.icon, color: Colors.white, size: 30),
+                const SizedBox(height: 8),
+                Text(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
