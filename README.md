@@ -129,3 +129,28 @@ bagian Tutorial 08 yang tidak diperlukan dihapus dan heading Tugas 7 disesuaikan
 dengan instruksi. Analisis kode dan dua tes widget telah lulus, tetapi hasil
 tersebut belum membuktikan bahwa seluruh tampilan nyaman digunakan di perangkat
 nyata.
+
+### Tutorial 9
+
+[Tutorial 9 PBP](https://pbp.cs.ui.ac.id/tutorial/tutorial-9.html) menambahkan
+navigasi dan formulir ke aplikasi portofolio Flutter.
+
+- **Navigasi.** Drawer membuka Home atau Tambah Proyek. Kartu Tambah Proyek
+  memakai `Navigator.push()` sehingga tombol Back bisa kembali ke Home.
+  Drawer mengganti halaman dengan `pushReplacement()`. Jika Home sudah ada
+  di riwayat, memilih Home dari form cukup menutup halaman form dengan `pop()`.
+- **Form.** Pengguna mengisi nama, deskripsi, kategori, teknologi, dan tautan.
+  Nama dan deskripsi wajib diisi. Save menampilkan ringkasan kelima isian
+  di pop-up. OK mengosongkan isian dan mengembalikan kategori ke nilai awal.
+  Data form hanya ditampilkan selama demo dan belum disimpan ke database.
+- **Struktur.** Halaman Home dan form berada di `lib/screens`. Drawer dan
+  kartu proyek berada di `lib/widgets`. Tampilan memakai paket `material_ui`.
+
+Jalankan `flutter pub get` dan `flutter run -d chrome` dari folder proyek.
+Untuk mencoba validasi, tekan Save dengan form kosong, lalu isi nama dan
+deskripsi dan tekan Save lagi. Cek ringkasan, tutup dengan OK, dan pastikan
+form kembali kosong.
+
+`flutter analyze` tidak menemukan masalah. Ketujuh tes widget lulus,
+termasuk navigasi dari drawer dan kartu, validasi isian kosong, reset form,
+dan gulir pop-up di layar kecil.
