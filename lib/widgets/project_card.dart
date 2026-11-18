@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// One action shown on the portfolio home page.
 class ItemHomepage {
@@ -29,6 +30,13 @@ class ItemCard extends StatelessWidget {
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
+          if (item.name == 'Tambah Proyek') {
+            // Push preserves Home so the system Back action can return to it.
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+            );
+          }
         },
         child: Center(
           child: Padding(
