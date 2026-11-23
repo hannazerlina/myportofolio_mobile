@@ -154,3 +154,78 @@ form kembali kosong.
 `flutter analyze` tidak menemukan masalah. Ketujuh tes widget lulus,
 termasuk navigasi dari drawer dan kartu, validasi isian kosong, reset form,
 dan gulir pop-up di layar kecil.
+
+### Tugas 8
+
+Halaman Tambah Pendidikan melanjutkan aplikasi portofolio Flutter dari
+Tutorial 9. Form memuat nama institusi, program studi, tahun masuk, dan tahun
+selesai. Tahun selesai bersifat opsional. Pilihan **Masih menempuh pendidikan**
+menyembunyikan kolom tersebut. Setelah isian lolos validasi, **Simpan**
+menampilkan ringkasan di dialog. Tombol **Tutup** kembali ke form dengan
+isian yang sama.
+
+#### Menjalankan proyek
+
+Jalankan perintah berikut dari folder proyek Flutter.
+
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter run -d chrome
+```
+
+Buka **Tambah Pendidikan** dari kartu di Home atau lewat drawer. Coba tekan
+**Simpan** saat kolom wajib kosong, lalu lengkapi isian untuk melihat
+ringkasannya. Pilih **Home** di drawer untuk kembali ke halaman utama.
+
+#### Jawaban pertanyaan reflektif
+
+1. **Navigasi** memakai tiga metode. `Navigator.push()` menambahkan halaman ke
+   tumpukan sehingga tombol Back bisa kembali ke halaman sebelumnya. Metode
+   ini dipakai saat form dibuka dari kartu Home. `Navigator.pushReplacement()`
+   mengganti halaman aktif, seperti saat form dibuka lewat drawer.
+   `Navigator.pop()` menutup lapisan aktif, misalnya dialog atau drawer.
+   Saat opsi Home dipilih, drawer ditutup terlebih dahulu. Jika Home sudah
+   ada di bawah form, `pop()` menutup form. Jika form menjadi halaman utama,
+   `pushReplacement()` menggantinya dengan Home.
+
+2. **Scaffold, AppBar, dan Drawer** memberi struktur yang konsisten pada
+   halaman. `Scaffold` menempatkan bilah atas, menu samping, dan isi halaman.
+   `AppBar` menunjukkan judul halaman dan memberi akses ke menu samping.
+   `LeftDrawer` yang sama menyediakan pilihan Home, Tambah Proyek, dan
+   Tambah Pendidikan. AppBar di halaman Home dan Tambah Pendidikan memakai
+   warna utama dari `Theme.of(context).colorScheme.primary`.
+
+3. **Tata letak form** memakai `Column` agar kolom isian tersusun ke bawah
+   mengikuti urutan pengisian. `SizedBox` memberi jarak antarinput dan
+   padding memberi ruang di tepi form. `ConstrainedBox` membatasi lebar
+   form pada layar besar. `SingleChildScrollView` membuat isian dan tombol
+   Simpan tetap bisa dijangkau saat layar sempit atau papan ketik tampil.
+
+4. **Validasi form** menggunakan `GlobalKey<FormState>` untuk mengakses
+   `FormState`. Tombol Simpan memanggil `validate()` untuk menjalankan
+   setiap `validator`. Pesan kesalahan muncul di kolom yang perlu diperbaiki.
+   Contohnya, tahun selesai 2024 ditolak jika tahun masuk 2025. Papan ketik
+   angka memudahkan pengisian, tetapi pengguna masih bisa menempelkan teks,
+   dan urutan dua tahun tetap perlu diperiksa oleh validator.
+
+#### Progres dan pemeriksaan
+
+Tugas 8 menambahkan form Pendidikan di `lib/screens` dan menghubungkannya
+ke kartu Home serta `LeftDrawer`. Ringkasan ditampilkan di dialog lokal.
+
+- `flutter analyze --no-pub` tidak menemukan masalah.
+- `flutter test --no-pub` meluluskan 11 tes widget. Tes mencakup navigasi,
+  kolom kosong, batas 200 karakter, format empat digit, urutan tahun, dan
+  akses ke tombol Simpan pada layar sempit saat papan ketik tampil.
+- Dua tes navigasi di Chrome lulus, termasuk membuka form dari kartu
+  atau drawer dan kembali ke Home.
+
+#### Bantuan AI
+
+Saya menggunakan ChatGPT untuk membahas instruksi Tugas 8 dan mencocokkan
+kolom formulir dengan model Education di portofolio. Bantuan mencakup
+implementasi form dan navigasi, penyusunan tes, serta draf refleksi.
+Hasilnya diperiksa dengan analisis kode dan tes widget, termasuk urutan
+tahun dan alur kembali ke Home.
