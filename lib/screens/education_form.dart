@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class EducationFormPage extends StatefulWidget {
   const EducationFormPage({super.key});
@@ -104,6 +105,7 @@ class _EducationFormPageState extends State<EducationFormPage> {
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
       ),
+      drawer: const LeftDrawer(currentPage: PortfolioPage.educationForm),
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(

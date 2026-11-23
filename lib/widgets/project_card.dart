@@ -1,13 +1,13 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// One action shown on the portfolio home page.
 class ItemHomepage {
-  const ItemHomepage(this.name, this.icon, this.color);
+  const ItemHomepage(this.name, this.icon, this.color, {this.buildPage});
 
   final String name;
   final IconData icon;
   final Color color;
+  final WidgetBuilder? buildPage;
 }
 
 class ItemCard extends StatelessWidget {
@@ -30,11 +30,12 @@ class ItemCard extends StatelessWidget {
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
-          if (item.name == 'Tambah Proyek') {
-            // Push preserves Home so the system Back action can return to it.
-            Navigator.push(
+          final buildPage = item.buildPage;
+          if (buildPage != null) {
+            // Push keeps Home in the stack for the system Back button.
+            Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+              MaterialPageRoute<void>(builder: buildPage),
             );
           }
         },

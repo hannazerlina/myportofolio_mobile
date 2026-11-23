@@ -1,11 +1,35 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
-class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key, this.isProjectForm = false});
+enum PortfolioPage { home, projectForm, educationForm }
 
-  final bool isProjectForm;
+class LeftDrawer extends StatelessWidget {
+  const LeftDrawer({super.key, this.currentPage = PortfolioPage.home});
+
+  final PortfolioPage currentPage;
+
+  void _openPage(BuildContext context, PortfolioPage destination) {
+    final navigator = Navigator.of(context);
+    navigator.pop(); // Close the drawer before checking the page stack.
+    if (destination == currentPage) return;
+
+    if (destination == PortfolioPage.home && navigator.canPop()) {
+      navigator.pop(); // Reuse Home when a card pushed a form above it.
+      return;
+    }
+
+    navigator.pushReplacement<void, void>(
+      MaterialPageRoute<void>(
+        builder: (context) => switch (destination) {
+          PortfolioPage.home => const MyHomePage(),
+          PortfolioPage.projectForm => const ProjectFormPage(),
+          PortfolioPage.educationForm => const EducationFormPage(),
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,36 +59,20 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
-            selected: !isProjectForm,
-            onTap: () {
-              final navigator = Navigator.of(context);
-              navigator.pop();
-              if (!isProjectForm) return;
-              if (navigator.canPop()) {
-                // The home card pushed the form above the existing Home route.
-                navigator.pop();
-              } else {
-                navigator.pushReplacement(
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
-                );
-              }
-            },
+            selected: currentPage == PortfolioPage.home,
+            onTap: () => _openPage(context, PortfolioPage.home),
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Tambah Proyek'),
-            selected: isProjectForm,
-            onTap: () {
-              final navigator = Navigator.of(context);
-              navigator.pop();
-              if (!isProjectForm) {
-                navigator.pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const ProjectFormPage(),
-                  ),
-                );
-              }
-            },
+            selected: currentPage == PortfolioPage.projectForm,
+            onTap: () => _openPage(context, PortfolioPage.projectForm),
+          ),
+          ListTile(
+            leading: const Icon(Icons.school_outlined),
+            title: const Text('Tambah Pendidikan'),
+            selected: currentPage == PortfolioPage.educationForm,
+            onTap: () => _openPage(context, PortfolioPage.educationForm),
           ),
         ],
       ),

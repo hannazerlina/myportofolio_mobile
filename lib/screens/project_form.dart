@@ -84,7 +84,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(isProjectForm: true),
+      drawer: const LeftDrawer(currentPage: PortfolioPage.projectForm),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

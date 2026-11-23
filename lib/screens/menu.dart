@@ -1,15 +1,32 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:myportofolio_mobile/widgets/project_card.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
   static const items = [
     ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF234E99)),
-    ItemHomepage('Tambah Proyek', Icons.add_circle_outline, Color(0xFF26775E)),
+    ItemHomepage(
+      'Tambah Proyek',
+      Icons.add_circle_outline,
+      Color(0xFF26775E),
+      buildPage: _projectForm,
+    ),
+    ItemHomepage(
+      'Tambah Pendidikan',
+      Icons.school_outlined,
+      Color(0xFF6B4A91),
+      buildPage: _educationForm,
+    ),
     ItemHomepage('Logout', Icons.logout, Color(0xFF9B4A3D)),
   ];
+
+  static Widget _projectForm(BuildContext _) => const ProjectFormPage();
+
+  static Widget _educationForm(BuildContext _) => const EducationFormPage();
 
   @override
   Widget build(BuildContext context) {
