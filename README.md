@@ -229,3 +229,11 @@ kolom formulir dengan model Education di portofolio. Bantuan mencakup
 implementasi form dan navigasi, penyusunan tes, serta draf refleksi.
 Hasilnya diperiksa dengan analisis kode dan tes widget, termasuk urutan
 tahun dan alur kembali ke Home.
+
+##### Materi yang dibahas
+
+Pembahasan dengan ChatGPT mengacu pada materi Flutter di Tugas 8. Beberapa konsep yang dibahas beserta contohnya:
+
+- **Navigasi halaman.** `Navigator.push()` membuka form dari kartu Tambah Pendidikan sambil menyimpan halaman Home di riwayat. Tombol Back kemudian bisa menutup form dengan `Navigator.pop()`. Saat memilih halaman lain lewat drawer, `Navigator.pushReplacement()` mengganti halaman yang sedang dibuka.
+- **Validasi formulir.** Tombol **Simpan** memanggil `FormState.validate()` sebelum menampilkan ringkasan. Contohnya, tahun selesai 2024 ditolak jika tahun masuknya 2025. Jika tahun selesai dibiarkan kosong, ringkasan menampilkan **Masih berlangsung**.
+- **Tata letak di layar kecil.** `Column` menyusun kolom isian secara vertikal, `SizedBox` memberi jarak, dan `SingleChildScrollView` membuat tombol **Simpan** tetap bisa dijangkau saat papan ketik tampil.
