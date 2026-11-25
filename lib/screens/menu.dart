@@ -1,6 +1,10 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/auth_page.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list.dart';
+import 'package:myportofolio_mobile/services/portfolio_api.dart';
+import 'package:provider/provider.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -8,7 +12,12 @@ class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
   static const items = [
-    ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF234E99)),
+    ItemHomepage(
+      'Lihat Proyek',
+      Icons.folder_outlined,
+      Color(0xFF234E99),
+      buildPage: _projectList,
+    ),
     ItemHomepage(
       'Tambah Proyek',
       Icons.add_circle_outline,
@@ -24,17 +33,41 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage('Logout', Icons.logout, Color(0xFF9B4A3D)),
   ];
 
+  static Widget _projectList(BuildContext _) => const ProjectListPage();
+
   static Widget _projectForm(BuildContext _) => const ProjectFormPage();
 
   static Widget _educationForm(BuildContext _) => const EducationFormPage();
 
   @override
   Widget build(BuildContext context) {
+    final username = context.watch<PortfolioApi>().username;
     return Scaffold(
       appBar: AppBar(
         title: const Text('MyPortfolio'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
+        actions: [
+          if (username == null)
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
+              onPressed: () => Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(builder: (_) => const AuthPage()),
+              ),
+              child: const Text('Masuk'),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 110),
+                  child: Text(username, overflow: TextOverflow.ellipsis),
+                ),
+              ),
+            ),
+        ],
       ),
       drawer: const LeftDrawer(),
       body: LayoutBuilder(

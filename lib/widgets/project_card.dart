@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/services/portfolio_api.dart';
+import 'package:provider/provider.dart';
 
 /// One action shown on the portfolio home page.
 class ItemHomepage {
@@ -15,6 +17,29 @@ class ItemCard extends StatelessWidget {
 
   final ItemHomepage item;
 
+  Future<void> _signOut(BuildContext context) async {
+    final api = context.read<PortfolioApi>();
+    final messenger = ScaffoldMessenger.of(context);
+    if (api.username == null) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Kamu belum masuk.')),
+      );
+      return;
+    }
+    try {
+      await api.logout();
+      if (context.mounted) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Berhasil keluar.')),
+        );
+      }
+    } on ApiException catch (error) {
+      if (context.mounted) {
+        messenger.showSnackBar(SnackBar(content: Text(error.message)));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -23,6 +48,10 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
+          if (item.name == 'Logout') {
+            _signOut(context);
+            return;
+          }
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(

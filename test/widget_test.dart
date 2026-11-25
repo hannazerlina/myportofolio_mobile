@@ -4,11 +4,15 @@ import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
+import 'support/portfolio_fixture.dart';
+
 void main() {
   testWidgets('menampilkan profil dan empat menu dengan warna berbeda', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final api = portfolioFixture();
+    addTearDown(api.dispose);
+    await tester.pumpWidget(MyApp(api: api));
     expect(find.text('Hanna Zerlina Razaq Putri Wicaksono'), findsOneWidget);
     expect(find.text('2506594692'), findsOneWidget);
     expect(find.text('PBP E'), findsOneWidget);
@@ -23,7 +27,11 @@ void main() {
       await tester.tap(title);
       await tester.pumpAndSettle();
       expect(
-        find.text('Kamu telah menekan tombol ${item.name}!'),
+        find.text(
+          item.name == 'Logout'
+              ? 'Kamu belum masuk.'
+              : 'Kamu telah menekan tombol ${item.name}!',
+        ),
         findsOneWidget,
       );
       if (item.buildPage != null) {
@@ -38,7 +46,9 @@ void main() {
   testWidgets('halaman dapat discroll pada layar kecil', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 480));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(const MyApp());
+    final api = portfolioFixture();
+    addTearDown(api.dispose);
+    await tester.pumpWidget(MyApp(api: api));
     expect(tester.takeException(), isNull);
     await tester.scrollUntilVisible(
       find.text('Logout'),

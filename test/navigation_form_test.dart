@@ -5,12 +5,17 @@ import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
+import 'support/portfolio_fixture.dart';
+
 Finder field(String label) => find.byWidgetPredicate(
   (widget) => widget is TextField && widget.decoration?.labelText == label,
 );
 
 Future<void> openForm(WidgetTester tester) async {
-  await tester.pumpWidget(const MyApp());
+  final api = portfolioFixture(owner: true);
+  addTearDown(api.dispose);
+  await api.refreshSession();
+  await tester.pumpWidget(MyApp(api: api));
   final addCard = find.widgetWithText(ItemCard, 'Tambah Proyek');
   await tester.ensureVisible(addCard);
   await tester.tap(addCard);
@@ -57,7 +62,9 @@ void main() {
   testWidgets('drawer mengganti halaman tanpa menumpuk salinan route', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final api = portfolioFixture();
+    addTearDown(api.dispose);
+    await tester.pumpWidget(MyApp(api: api));
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, 'Tambah Proyek'));
@@ -113,20 +120,12 @@ void main() {
       field('Deskripsi Proyek'),
       ' Music director produksi musikal. ',
     );
-    await tester.enterText(
-      field('Teknologi yang Digunakan'),
-      'Flutter, Django',
-    );
+    await tester.enterText(field('Peran'), 'Music Director');
+    await tester.enterText(field('Tahun'), '2024');
     await tester.enterText(
       field('Tautan Proyek'),
       'https://example.com/project',
     );
-    final category = find.byType(DropdownButtonFormField<String>);
-    await tester.ensureVisible(category);
-    await tester.tap(category);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Other').last);
-    await tester.pumpAndSettle();
     await saveForm(tester);
 
     expect(find.byType(AlertDialog), findsOneWidget);
@@ -135,8 +134,8 @@ void main() {
       find.text('Deskripsi: Music director produksi musikal.'),
       findsOneWidget,
     );
-    expect(find.text('Kategori: Other'), findsOneWidget);
-    expect(find.text('Teknologi: Flutter, Django'), findsOneWidget);
+    expect(find.text('Peran: Music Director'), findsOneWidget);
+    expect(find.text('Tahun: 2024'), findsOneWidget);
     expect(find.text('Tautan: https://example.com/project'), findsOneWidget);
     await tester.tap(find.widgetWithText(TextButton, 'OK'));
     await tester.pumpAndSettle();
@@ -147,18 +146,14 @@ void main() {
     )) {
       expect(editable.controller.text, isEmpty);
     }
-    expect(
-      tester.state<FormFieldState<String>>(category).value,
-      'Web Development',
-    );
 
     // A new submission must not reuse optional values from the previous dialog.
     await tester.enterText(field('Nama Proyek'), 'Proyek berikutnya');
     await tester.enterText(field('Deskripsi Proyek'), 'Deskripsi baru');
+    await tester.enterText(field('Peran'), 'Penulis');
+    await tester.enterText(field('Tahun'), '2026');
     await saveForm(tester);
     expect(find.text('Nama Proyek: Proyek berikutnya'), findsOneWidget);
-    expect(find.text('Kategori: Web Development'), findsOneWidget);
-    expect(find.text('Teknologi: -'), findsOneWidget);
     expect(find.text('Tautan: -'), findsOneWidget);
   });
 
@@ -169,6 +164,8 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await openForm(tester);
     await tester.enterText(field('Nama Proyek'), 'Proyek layar kecil');
+    await tester.enterText(field('Peran'), 'Penulis');
+    await tester.enterText(field('Tahun'), '2026');
     await tester.enterText(
       field('Deskripsi Proyek'),
       List.filled(30, 'Deskripsi panjang.').join(' '),

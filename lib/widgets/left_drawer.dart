@@ -2,8 +2,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list.dart';
 
-enum PortfolioPage { home, projectForm, educationForm }
+enum PortfolioPage { home, projects, projectForm, educationForm }
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key, this.currentPage = PortfolioPage.home});
@@ -24,6 +25,7 @@ class LeftDrawer extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (context) => switch (destination) {
           PortfolioPage.home => const MyHomePage(),
+          PortfolioPage.projects => const ProjectListPage(),
           PortfolioPage.projectForm => const ProjectFormPage(),
           PortfolioPage.educationForm => const EducationFormPage(),
         },
@@ -61,6 +63,12 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Home'),
             selected: currentPage == PortfolioPage.home,
             onTap: () => _openPage(context, PortfolioPage.home),
+          ),
+          ListTile(
+            leading: const Icon(Icons.folder_outlined),
+            title: const Text('Lihat Proyek'),
+            selected: currentPage == PortfolioPage.projects,
+            onTap: () => _openPage(context, PortfolioPage.projects),
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),

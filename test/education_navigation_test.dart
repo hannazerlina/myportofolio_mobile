@@ -6,6 +6,8 @@ import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
+import 'support/portfolio_fixture.dart';
+
 Future<void> _chooseDrawerItem(WidgetTester tester, String label) async {
   await tester.tap(find.byTooltip('Open navigation menu'));
   await tester.pumpAndSettle();
@@ -17,7 +19,9 @@ void main() {
   testWidgets('kartu Pendidikan membuka form dan tombol Back kembali ke Home', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final api = portfolioFixture();
+    addTearDown(api.dispose);
+    await tester.pumpWidget(MyApp(api: api));
     final card = find.widgetWithText(ItemCard, 'Tambah Pendidikan');
     await tester.ensureVisible(card);
     await tester.tap(card);
@@ -43,7 +47,9 @@ void main() {
   testWidgets('drawer membuka Pendidikan, Proyek, dan Home dari rute utama', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final api = portfolioFixture();
+    addTearDown(api.dispose);
+    await tester.pumpWidget(MyApp(api: api));
     await _chooseDrawerItem(tester, 'Tambah Pendidikan');
     expect(find.byType(EducationFormPage), findsOneWidget);
     expect(
