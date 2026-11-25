@@ -237,3 +237,53 @@ Pembahasan dengan ChatGPT mengacu pada materi Flutter di Tugas 8. Beberapa konse
 - **Navigasi halaman.** `Navigator.push()` membuka form dari kartu Tambah Pendidikan sambil menyimpan halaman Home di riwayat. Tombol Back kemudian bisa menutup form dengan `Navigator.pop()`. Saat memilih halaman lain lewat drawer, `Navigator.pushReplacement()` mengganti halaman yang sedang dibuka.
 - **Validasi formulir.** Tombol **Simpan** memanggil `FormState.validate()` sebelum menampilkan ringkasan. Contohnya, tahun selesai 2024 ditolak jika tahun masuknya 2025. Jika tahun selesai dibiarkan kosong, ringkasan menampilkan **Masih berlangsung**.
 - **Tata letak di layar kecil.** `Column` menyusun kolom isian secara vertikal, `SizedBox` memberi jarak, dan `SingleChildScrollView` membuat tombol **Simpan** tetap bisa dijangkau saat papan ketik tampil.
+
+### Tutorial 10
+
+Portofolio Flutter terhubung ke Django untuk pendaftaran, login, logout,
+daftar dan detail proyek, serta penyimpanan proyek. Akun pemilik portofolio
+bisa menyimpan proyek melalui API. Form memakai kolom judul, peran, tahun,
+deskripsi, dan tautan opsional dari model Project.
+
+#### Menjalankan proyek
+
+Dari folder Django, aktifkan virtual environment lalu jalankan:
+
+```bash
+python -m pip install -r requirements.txt
+python -B manage.py runserver 127.0.0.1:8000
+```
+
+Dari folder Flutter, jalankan:
+
+```bash
+flutter pub get
+flutter run -d chrome --web-hostname 127.0.0.1 --web-port 8099
+```
+
+Buka **Lihat Proyek** untuk mengambil daftar dari Django, lalu pilih salah
+satu untuk melihat detail. Gunakan **Masuk** untuk login atau mendaftar.
+Setelah masuk dengan akun pemilik lokal, coba **Tambah Proyek** dan periksa
+hasilnya pada daftar proyek. **Logout** mengakhiri sesi.
+
+Port Flutter 8099 masuk daftar asal web yang diizinkan pada pengaturan
+lokal Django. Untuk lingkungan lain, atur `MOBILE_WEB_ORIGINS` di Django
+dan alamat Django melalui `--dart-define=DJANGO_BASE_URL=...` saat
+menjalankan Flutter.
+
+#### Progres dan pemeriksaan
+
+- Django menggunakan autentikasi sesi dan token CSRF untuk permintaan yang
+  mengubah data. Form proyek memakai izin pemilik dari API Django.
+- `flutter analyze --no-pub` bersih. Sebanyak 12 tes widget Flutter lulus
+  di Chrome dengan respons uji. Sebanyak 15 tes Django lulus, termasuk
+  pemeriksaan sesi, CSRF, dan izin API.
+- Endpoint sesi dan daftar proyek juga diperiksa langsung saat server
+  Django lokal berjalan.
+
+#### Rujukan dan bantuan
+
+Implementasi mengacu pada [materi integrasi Flutter dan Django semester sebelumnya](https://pbp-fasilkom-ui.github.io/ganjil-2026/en/docs/tutorial-8)
+karena halaman [Tutorial 10](https://pbp.cs.ui.ac.id/tutorial/tutorial-10.html)
+mengembalikan HTTP 429 saat diperiksa. ChatGPT membantu implementasi dan
+pengujian alur integrasi.
